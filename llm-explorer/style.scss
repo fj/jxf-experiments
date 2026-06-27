@@ -1,0 +1,514 @@
+// Self-contained styles for the LLM Explorer experiment. These mirror the
+// few hugo-coder primitives the experiment relies on (mono font, hairline
+// border, mobile breakpoint, dark-mode toggle) so this file compiles on its
+// own — the host site only runs it through Hugo's SCSS->CSS step. The dark
+// variants key off body.colorscheme-dark, the class the site's theme toggle
+// sets.
+$mono-font-family: "Fantasque Sans Mono", monospace;
+$border-color: #ddd;
+$border-color-dark: #444;
+
+@mixin mobile {
+  @media only screen and (max-width: "767px") { @content; }
+}
+@mixin dark-mode {
+  @at-root body.colorscheme-dark & { @content; }
+  @at-root body.colorscheme-auto & {
+    @media (prefers-color-scheme: dark) { @content; }
+  }
+}
+
+$llmx-link: #1565c0;
+$llmx-link-dark: #42a5f5;
+$llmx-panel: #f6f7f9;
+$llmx-panel-dark: #2b2b2b;
+$llmx-surface: #ffffff;
+$llmx-surface-dark: #333333;
+$llmx-muted: #6b7280;
+$llmx-muted-dark: #9aa0a6;
+
+.llmx {
+  margin: 2rem 0 1rem;
+  font-size: 0.95rem;
+
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+}
+
+.llmx-noscript { color: $llmx-muted; }
+
+// ---------------------------------------------------------------------------
+// Controls panel
+// ---------------------------------------------------------------------------
+.llmx-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem 1.4rem;
+  background: $llmx-panel;
+  border: 1px solid $border-color;
+  border-radius: 0.7rem;
+
+  @include dark-mode {
+    background: $llmx-panel-dark;
+    border-color: $border-color-dark;
+  }
+}
+
+.llmx-field-label {
+  display: block;
+  font-family: $mono-font-family;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $llmx-muted;
+  margin-bottom: 0.45rem;
+
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+
+// Scenarios -----------------------------------------------------------------
+.llmx-scenario-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.llmx-scenario {
+  appearance: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.86rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid $border-color;
+  background: $llmx-surface;
+  color: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover { border-color: $llmx-link; }
+
+  &.is-active {
+    background: $llmx-link;
+    border-color: $llmx-link;
+    color: #fff;
+  }
+
+  @include dark-mode {
+    background: $llmx-surface-dark;
+    border-color: $border-color-dark;
+    &:hover { border-color: $llmx-link-dark; }
+    &.is-active { background: $llmx-link-dark; border-color: $llmx-link-dark; color: #10243a; }
+  }
+}
+
+// Axes + model picker -------------------------------------------------------
+.llmx-axes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+
+  @include mobile { grid-template-columns: 1fr; }
+}
+
+.llmx-select {
+  appearance: none;
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 2rem 0.5rem 0.7rem;
+  border-radius: 0.45rem;
+  border: 1px solid $border-color;
+  background-color: $llmx-surface;
+  color: inherit;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 1.1rem) 55%, calc(100% - 0.75rem) 55%;
+  background-size: 0.36rem 0.36rem, 0.36rem 0.36rem;
+  background-repeat: no-repeat;
+  cursor: pointer;
+
+  @include dark-mode {
+    background-color: $llmx-surface-dark;
+    border-color: $border-color-dark;
+  }
+}
+
+// Model dropdown ------------------------------------------------------------
+.llmx-dropdown { position: relative; }
+
+.llmx-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.45rem;
+  border: 1px solid $border-color;
+  background: $llmx-surface;
+  color: inherit;
+  cursor: pointer;
+
+  @include dark-mode { background: $llmx-surface-dark; border-color: $border-color-dark; }
+}
+.llmx-caret { color: $llmx-muted; font-size: 0.7rem; }
+
+.llmx-dropdown-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  max-height: 19rem;
+  overflow-y: auto;
+  padding: 0.6rem;
+  background: $llmx-surface;
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+
+  @include dark-mode {
+    background: $llmx-surface-dark;
+    border-color: $border-color-dark;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.llmx-dropdown-actions {
+  display: flex;
+  gap: 0.4rem;
+  padding-bottom: 0.55rem;
+  margin-bottom: 0.4rem;
+  border-bottom: 1px solid $border-color;
+
+  button {
+    flex: 1;
+    font: inherit;
+    font-size: 0.78rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: 0.35rem;
+    border: 1px solid $border-color;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    &:hover { border-color: $llmx-link; color: $llmx-link; }
+  }
+
+  @include dark-mode {
+    border-bottom-color: $border-color-dark;
+    button { border-color: $border-color-dark; &:hover { border-color: $llmx-link-dark; color: $llmx-link-dark; } }
+  }
+}
+
+.llmx-model-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: $mono-font-family;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $llmx-muted;
+  margin: 0.55rem 0 0.2rem;
+
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+.llmx-model-group:first-child .llmx-model-brand { margin-top: 0; }
+
+.llmx-model-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.22rem 0.25rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+  font-size: 0.86rem;
+
+  &:hover { background: rgba(0, 0, 0, 0.04); }
+  input { cursor: pointer; margin: 0; }
+
+  @include dark-mode { &:hover { background: rgba(255, 255, 255, 0.06); } }
+}
+
+.llmx-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+// Advanced ------------------------------------------------------------------
+.llmx-advanced {
+  border-top: 1px solid $border-color;
+  padding-top: 0.5rem;
+
+  @include dark-mode { border-top-color: $border-color-dark; }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-weight: 700;
+
+    &::-webkit-details-marker { display: none; }
+    &::before {
+      content: "▸";
+      color: $llmx-muted;
+      font-size: 0.8rem;
+      transition: transform 0.15s ease;
+    }
+  }
+  &[open] summary::before { transform: rotate(90deg); }
+}
+.llmx-summary-hint {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: $llmx-muted;
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+
+.llmx-advanced-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem 1.6rem;
+  margin-top: 1.1rem;
+
+  @include mobile { grid-template-columns: 1fr; }
+}
+.llmx-workload-readout {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: $mono-font-family;
+  font-size: 0.82rem;
+  color: $llmx-muted;
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+
+.llmx-control-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+
+  label { font-weight: 700; font-size: 0.9rem; }
+}
+.llmx-control-value {
+  font-family: $mono-font-family;
+  font-size: 0.82rem;
+  color: $llmx-link;
+  @include dark-mode { color: $llmx-link-dark; }
+}
+.llmx-control-hint {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: $llmx-muted;
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+.llmx-scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: $llmx-muted;
+  margin-top: 0.2rem;
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+
+// Range inputs
+.llmx-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.1rem;
+  background: transparent;
+  cursor: pointer;
+
+  &:focus { outline: none; }
+  &:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.3); }
+
+  @mixin llmx-track {
+    height: 0.32rem;
+    border-radius: 999px;
+    background: $border-color;
+    @include dark-mode { background: $border-color-dark; }
+  }
+  @mixin llmx-thumb {
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 50%;
+    background: $llmx-link;
+    border: 2px solid $llmx-surface;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    @include dark-mode { background: $llmx-link-dark; border-color: $llmx-surface-dark; }
+  }
+
+  &::-webkit-slider-runnable-track { @include llmx-track; }
+  &::-moz-range-track { @include llmx-track; }
+  &::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; margin-top: -0.38rem; @include llmx-thumb; }
+  &::-moz-range-thumb { @include llmx-thumb; }
+}
+
+// ---------------------------------------------------------------------------
+// Chart
+// ---------------------------------------------------------------------------
+.llmx-figure {
+  margin: 1.5rem 0 0;
+}
+
+.llmx-chart-holder {
+  position: relative;
+  width: 100%;
+}
+
+.llmx-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+
+  text { font-family: $mono-font-family; }
+
+  .llmx-axis {
+    text { font-size: 0.72rem; fill: $llmx-muted; }
+    path.domain,
+    line { stroke: $border-color; }
+    @include dark-mode {
+      text { fill: $llmx-muted-dark; }
+      path.domain, line { stroke: $border-color-dark; }
+    }
+  }
+
+  .llmx-grid {
+    line { stroke: $border-color; stroke-opacity: 0.45; }
+    path { display: none; }
+    @include dark-mode { line { stroke: $border-color-dark; stroke-opacity: 0.5; } }
+  }
+
+  .llmx-axis-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    fill: currentColor;
+  }
+
+  .llmx-pt {
+    circle {
+      stroke: $llmx-surface;
+      stroke-width: 1.5;
+      transition: r 0.12s ease;
+      @include dark-mode { stroke: $llmx-surface-dark; }
+    }
+    &.is-hover circle { r: 8.5; }
+  }
+
+  .llmx-pt-label {
+    font-size: 0.7rem;
+    fill: currentColor;
+    paint-order: stroke;
+    stroke: $llmx-surface;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    pointer-events: none;
+    @include dark-mode { stroke: $llmx-surface-dark; }
+  }
+}
+
+// Tooltip
+.llmx-tooltip {
+  position: absolute;
+  z-index: 30;
+  pointer-events: none;
+  min-width: 12rem;
+  max-width: 17rem;
+  padding: 0.7rem 0.8rem;
+  font-size: 0.8rem;
+  background: $llmx-surface;
+  border: 1px solid $border-color;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.16);
+
+  &[hidden] { display: none; }
+
+  @include dark-mode {
+    background: $llmx-surface-dark;
+    border-color: $border-color-dark;
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
+  }
+}
+.llmx-tip-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+.llmx-tip-sub {
+  font-size: 0.72rem;
+  color: $llmx-muted;
+  margin: 0.1rem 0 0.5rem;
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+.llmx-tip-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.12rem 0.8rem;
+  margin: 0;
+
+  dt { color: $llmx-muted; @include dark-mode { color: $llmx-muted-dark; } }
+  dd { margin: 0; text-align: right; font-family: $mono-font-family; font-size: 0.76rem; }
+}
+
+// Legend
+.llmx-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+.llmx-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 0.15rem 0.3rem;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 0.3rem;
+
+  &.is-off { opacity: 0.38; }
+  &.is-off .llmx-dot { filter: grayscale(1); }
+  &:hover { text-decoration: underline; }
+}
+
+.llmx-provenance {
+  margin-top: 1.1rem;
+  font-size: 0.74rem;
+  line-height: 1.5;
+  color: $llmx-muted;
+  text-align: center;
+
+  a { color: inherit; text-decoration: underline; }
+  @include dark-mode { color: $llmx-muted-dark; }
+}
+.llmx-provenance-note { display: block; margin-top: 0.2rem; opacity: 0.9; }
+
+.llmx-empty {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  text-align: center;
+  color: $llmx-muted;
+  @include dark-mode { color: $llmx-muted-dark; }
+}
