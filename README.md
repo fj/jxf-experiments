@@ -11,6 +11,10 @@ jxf-site includes this repo as a git submodule at `site/assets/experiments/`.
 For each experiment the site renders an empty mount element plus `<link>`/
 `<script>` tags pointing at the files here:
 
+- `manifest.yaml` — declares what the experiment is made of: its mount element,
+  stylesheets, third-party dependencies (fetched at build time, pinned + verified
+  via SRI), and local scripts in load order. The host reads this and hardcodes
+  nothing about the experiment.
 - `style.scss` — compiled to CSS by Hugo's SCSS step (self-contained; no shared
   imports). The dark variants key off `body.colorscheme-dark`, the class the
   site theme's toggle sets, so the experiment inherits the site's look.
@@ -19,10 +23,10 @@ For each experiment the site renders an empty mount element plus `<link>`/
 - `data.js` — sets `window.JXF_EXP_DATA["<name>"]`. Shipped as **JS, not JSON**,
   so the host page loads it with a plain `<script src>` and never runs it
   through a JSON/templating pipeline.
-Third-party libraries (e.g. d3 v7) are **not committed here** — they're a
-dependency the host pulls down at build time (jxf-site fetches d3 with Hugo's
-`resources.GetRemote` and serves it self-hosted), so this repo stays free of
-vendored blobs.
+Third-party libraries (e.g. d3 v7) are **not committed here** — they're declared
+as dependencies in `manifest.yaml`. The host pulls them down at build time
+(verifying the pinned SRI) and serves them self-hosted, so this repo stays free of
+vendored blobs and the dependency list lives with the experiment, not the host.
 
 Because the app runs in the host page's document, it inherits the site's fonts,
 colours, and dark mode while bringing its own scoped `.llmx-*` component styles.

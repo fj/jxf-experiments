@@ -1,0 +1,29 @@
+# Manifest for the LLM Explorer experiment.
+#
+# The host (jxf-site) reads this to assemble the page: it compiles the styles,
+# fetches the declared third-party dependencies at build time and serves them
+# self-hosted, and loads the local scripts. The experiment is the source of
+# truth for its own composition and dependencies — the host hardcodes nothing.
+
+name: llm-explorer
+
+# id of the element the app builds itself into (app.js owns the same id).
+mount: llmx
+
+# Stylesheets (relative to this dir). .scss is compiled to CSS by the host.
+styles:
+  - style.scss
+
+# Third-party libraries the host fetches at build time (pinned + verified via
+# SRI) and serves self-hosted — no runtime CDN dependency.
+dependencies:
+  - name: d3
+    version: "7.9.0"
+    url: "https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"
+    integrity: "sha256-8glLv2FBs1lyLE/kVOtsSw8OQswQzHr5IfwVj864ZTk="
+
+# Local scripts (relative to this dir), loaded after dependencies, in order.
+# app.js comes last: it needs d3 and the data global.
+scripts:
+  - data.js
+  - app.js
