@@ -28,10 +28,10 @@ $llmx-muted: #6b7280;
 $llmx-muted-dark: #9aa0a6;
 
 .llmx {
-  margin: 2rem 0 1rem;
   font-size: 0.95rem;
-  // The typographic baseline (line-height reset, box-sizing) is provided once by
-  // the host's shared `.experiment` wrapper, so experiments don't each re-fix it.
+  // The mount's outer box (margins, width, centering) and the typographic
+  // baseline (line-height, box-sizing) are owned by the host's .experiment-embed
+  // wrapper — the experiment only styles what's inside the mount.
 }
 
 .llmx-noscript { color: $llmx-muted; }
