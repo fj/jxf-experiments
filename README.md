@@ -1,4 +1,4 @@
-# jxf-experiments
+# jxf-site-experiments
 
 Self-contained interactive explorations ("experiments") that are embedded into
 [jxf-site](https://github.com/fj/jxf-site). This repo owns each experiment's
